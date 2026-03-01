@@ -8,6 +8,19 @@ use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
+
+    public function cadetAttendance()
+{
+    $attendances = Attendance::with(['event'])
+        ->whereHas('cadet', function ($query) {
+            $query->where('user_id', Auth::id());
+        })
+        ->get();
+
+    return view('cadet.attendance', compact('attendances'));
+}
+
+
     public function store(Request $request)
     {
         $request->validate([

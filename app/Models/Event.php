@@ -12,4 +12,8 @@ class Event extends Model
         'description',
         'event_date'
     ];
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
+    }
 }

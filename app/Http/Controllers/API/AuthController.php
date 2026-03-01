@@ -32,31 +32,28 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // Create user
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => bcrypt($request->password),
             'role' => $request->role,
             'phone' => $request->phone
         ]);
 
-        // Create role specific record
         if ($request->role === 'admin') {
             Admin::create([
                 'user_id' => $user->id,
-                'admin_code' => 'ADM' . rand(1000,9999),
+                'admin_code' => 'ADM' . strtoupper(uniqid()),
             ]);
         }
 
         if ($request->role === 'cadet') {
             Cadet::create([
                 'user_id' => $user->id,
-                'enrollment_no' => 'NCC' . rand(10000,99999),
+                'enrollment_no' => 'NCC' . strtoupper(uniqid()),
             ]);
         }
 
-        // Create token
         $token = $user->createToken('ncc_token')->plainTextToken;
 
         return response()->json([
@@ -68,7 +65,7 @@ class AuthController extends Controller
     }
 
     // =============================
-    // LOGIN
+    // LOGIN (API Version)
     // =============================
     public function login(Request $request)
     {
@@ -108,7 +105,7 @@ class AuthController extends Controller
     // =============================
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
+        $request->user()->currentAccessToken()->delete();
 
         return response()->json([
             'status' => true,
