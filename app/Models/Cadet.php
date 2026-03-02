@@ -8,8 +8,24 @@ class Cadet extends Model
 {
     protected $fillable = [
         'user_id',
-        'enrollment_no'
+        'enrollment_no',
+        'student_id',
+        'course',
+        'phone',
+        'dob',
+        'gender',
+        'address',
+        'profile_completed',
     ];
+<<<<<<< HEAD
+=======
+
+    protected $casts = [
+        'dob' => 'date',
+        'profile_completed' => 'boolean',
+    ];
+
+>>>>>>> 50b03e8 (Landing Page Updated)
     public function user()
     {
         return $this->belongsTo(User::class);

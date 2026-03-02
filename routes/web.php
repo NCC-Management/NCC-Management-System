@@ -1,6 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\WebAuthController;
+use App\Http\Controllers\CadetController;
+
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CadetController;
@@ -87,11 +95,64 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+
+/*
+|--------------------------------------------------------------------------
+| Guest Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('guest')->group(function () {
+
+    Route::post('/login', [WebAuthController::class, 'login'])->name('login');
+    Route::post('/register', [WebAuthController::class, 'register'])->name('register');
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+
+    Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Dashboard
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/admin/dashboard', function () {
+
+        abort_if(auth()->user()->role !== 'admin', 403);
+
+        return view('admin.dashboard');
+
+    })->name('admin.dashboard');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cadet Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/cadet/complete-profile', [CadetController::class, 'completeProfile'])
+        ->name('cadet.complete-profile');
+
+    Route::post('/cadet/complete-profile', [CadetController::class, 'storeProfile'])
+        ->name('cadet.complete-profile.store');
+
+    Route::get('/cadet/dashboard', [CadetController::class, 'dashboard'])
+        ->name('cadet.dashboard');
+
+});
 
 require __DIR__.'/settings.php';
