@@ -1,58 +1,48 @@
-// the cadet layout doesn't exist; use the admin layout which is available
 @extends('layouts.admin')
 
 @section('content')
 
-<div class="bg-white p-6 rounded shadow">
+<h2 class="mb-3">Mark Attendance</h2>
 
-    <h2 class="text-2xl font-bold mb-6">My Attendance Records</h2>
+<form method="POST" action="{{ route('attendance.store') }}">
+@csrf
 
-    @if($attendances->isEmpty())
-        <div class="text-red-600 font-semibold">
-            No attendance records found.
-        </div>
-    @else
-
-        <div class="overflow-x-auto">
-            <table class="w-full border border-gray-200">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="p-3 border">Event</th>
-                        <th class="p-3 border">Date</th>
-                        <th class="p-3 border">Status</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach($attendances as $attendance)
-                        <tr class="text-center">
-                            <td class="p-3 border">
-                                {{ $attendance->event->title ?? 'N/A' }}
-                            </td>
-
-                            <td class="p-3 border">
-                                {{ $attendance->event->event_date ?? 'N/A' }}
-                            </td>
-
-                            <td class="p-3 border">
-                                @if($attendance->status == 'present')
-                                    <span class="text-green-600 font-semibold">
-                                        Present
-                                    </span>
-                                @else
-                                    <span class="text-red-600 font-semibold">
-                                        Absent
-                                    </span>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-    @endif
-
+{{-- Select Event --}}
+<div class="mb-3">
+    <label class="form-label">Event</label>
+    <select name="event_id" class="form-control" required>
+        <option value="">-- Select Event --</option>
+        @foreach($events as $event)
+            <option value="{{ $event->id }}">{{ $event->title }}</option>
+        @endforeach
+    </select>
 </div>
+
+{{-- Cadet Attendance Table --}}
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Cadet Name</th>
+            <th>Attendance</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($cadets as $cadet)
+        <tr>
+            <td>{{ $cadet->user->name }}</td>
+            <td>
+                <select name="attendance[{{ $cadet->id }}]" class="form-control" required>
+                    <option value="present">Present</option>
+                    <option value="absent">Absent</option>
+                </select>
+            </td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+
+<button class="btn btn-success">Save Attendance</button>
+
+</form>
 
 @endsection

@@ -1,27 +1,48 @@
 @extends('layouts.admin')
+
 @section('content')
 
-<h2>Mark Attendance</h2>
+<h2 class="mb-3">Mark Attendance</h2>
 
 <form method="POST" action="{{ route('attendance.store') }}">
 @csrf
 
-<select name="cadet_id" class="form-control mb-2">
-@foreach($cadets as $cadet)
-<option value="{{ $cadet->id }}">
-    {{ $cadet->user->name }}
-</option>
-@endforeach
-</select>
+{{-- Select Event --}}
+<div class="mb-3">
+    <label class="form-label">Select Event</label>
+    <select name="event_id" class="form-control" required>
+        <option value="">-- Select Event --</option>
+        @foreach($events as $event)
+            <option value="{{ $event->id }}">{{ $event->title }}</option>
+        @endforeach
+    </select>
+</div>
 
-<input type="date" name="date" class="form-control mb-2">
+{{-- Attendance Table --}}
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Cadet Name</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($cadets as $cadet)
+        <tr>
+            <td>{{ $cadet->user->name }}</td>
+            <td>
+                <select name="attendance[{{ $cadet->id }}]" class="form-control" required>
+                    <option value="present">Present</option>
+                    <option value="absent">Absent</option>
+                </select>
+            </td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
 
-<select name="status" class="form-control mb-2">
-<option value="present">Present</option>
-<option value="absent">Absent</option>
-</select>
+<button class="btn btn-success">Save Attendance</button>
 
-<button class="btn btn-success">Save</button>
 </form>
 
 @endsection
