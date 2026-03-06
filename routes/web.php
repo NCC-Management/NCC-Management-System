@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\WebAuthController;
 use App\Http\Controllers\CadetController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CadetController as AdminCadetController;
@@ -18,6 +18,9 @@ use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 */
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        return auth()->user()->role === 'admin' ? redirect()->route('admin.dashboard') : redirect()->route('cadet.dashboard');
+    }
     return view('landing');
 })->name('home');
 
@@ -30,11 +33,17 @@ Route::get('/', function () {
 
 Route::middleware('guest')->group(function () {
 
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::get('/login', function () {
+        return view('landing');
+    })->name('login');
+    
+    Route::post('/login', [WebAuthController::class, 'login'])->name('login.post');
 
-    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+    Route::get('/register', function () {
+        return view('landing');
+    })->name('register');
+    
+    Route::post('/register', [WebAuthController::class, 'register'])->name('register.post');
 });
 
 
@@ -46,11 +55,7 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 
 
     /*
@@ -100,11 +105,14 @@ Route::middleware(['auth', 'admin'])
         Route::get('forms/approved', [FormController::class, 'approved'])->name('forms.approved');
         Route::get('forms/pending', [FormController::class, 'pending'])->name('forms.pending');
         Route::get('forms/rejected', [FormController::class, 'rejected'])->name('forms.rejected');
+
         Route::resource('forms', FormController::class);
 
         Route::get('profile', [AdminProfileController::class, 'edit'])->name('profile.edit');
         Route::put('profile', [AdminProfileController::class, 'update'])->name('profile.update');
-        Route::put('profile/password', [AdminProfileController::class, 'updatePassword'])->name('profile.password.update');
+        Route::put('profile/password', [AdminProfileController::class, 'updatePassword'])
+            ->name('profile.password.update');
     });
 
 require __DIR__ . '/settings.php';
+

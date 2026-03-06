@@ -17,7 +17,7 @@ class WebAuthController extends Controller
     | LOGIN (Session Based Authentication)
     |--------------------------------------------------------------------------
     */
-    public function login(Request $request)
+public function login(Request $request)
 {
     $credentials = $request->validate([
         'email'    => ['required', 'email'],
@@ -25,21 +25,25 @@ class WebAuthController extends Controller
     ]);
 
     if (!Auth::attempt($credentials, $request->boolean('remember'))) {
-        throw ValidationException::withMessages([
-            'email' => ['Invalid credentials.'],
-        ]);
+        return back()->withErrors([
+            'email' => 'Invalid credentials.',
+        ])->onlyInput('email');
     }
 
     $request->session()->regenerate();
 
-    return match (Auth::user()->role) {
-        'admin'  => redirect()->route('admin.dashboard'),
-        'cadet'  => redirect()->route('cadet.dashboard'),
-        default  => redirect()->route('home'),
-    };
+    $user = Auth::user();
+
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+
+    if ($user->role === 'cadet') {
+        return redirect()->route('cadet.dashboard');
+    }
+
+    return redirect()->route('home');
 }
-
-
     /*
     |--------------------------------------------------------------------------
     | REGISTER (Public Cadet Enrollment Only)
