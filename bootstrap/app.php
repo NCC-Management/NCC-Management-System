@@ -11,20 +11,12 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-<<<<<<< HEAD
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-    'admin' => \App\Http\Middleware\AdminMiddleware::class,
-]);
-        //
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
+        ]);
     })
-=======
-   ->withMiddleware(function ($middleware) {
-    $middleware->alias([
-        'role' => \App\Http\Middleware\RoleMiddleware::class,
-    ]);
-})
->>>>>>> 50b03e8 (Landing Page Updated)
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\FormController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -151,6 +152,15 @@ Route::middleware(['auth', 'admin'])
         Route::post('forms/{form}/approve', [FormController::class, 'approve'])->name('forms.approve');
         Route::post('forms/{form}/reject', [FormController::class, 'reject'])->name('forms.reject');
         Route::delete('forms/{form}', [FormController::class, 'destroy'])->name('forms.destroy');
+
+        /*
+         |---------------------------------------------------------------------
+         | Profile (admin.profile.*)
+         |---------------------------------------------------------------------
+         */
+        Route::get('profile', [AdminProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('profile', [AdminProfileController::class, 'update'])->name('profile.update');
+        Route::put('profile/password', [AdminProfileController::class, 'updatePassword'])->name('profile.password.update');
 
     });
 
