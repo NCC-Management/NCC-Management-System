@@ -3,7 +3,7 @@
 
 <h2>Edit Cadet</h2>
 
-<form method="POST" action="{{ route('cadets.update',$cadet) }}">
+<form method="POST" action="{{ route('admin.cadets.update',$cadet) }}">
 @csrf
 @method('PUT')
 

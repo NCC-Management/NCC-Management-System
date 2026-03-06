@@ -24,15 +24,15 @@ class EventController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'unit_id' => 'required',
-            'title' => 'required',
+            'unit_id'    => 'required|exists:units,id',
+            'title'      => 'required|string',
             'event_date' => 'required|date',
         ]);
 
         Event::create($request->all());
 
-        return redirect()->route('events.index')
-            ->with('success','Event Created Successfully');
+        return redirect()->route('admin.events.index')
+            ->with('success', 'Event Created Successfully');
     }
 
     public function edit(Event $event)
@@ -51,7 +51,7 @@ class EventController extends Controller
 
         $event->update($request->all());
 
-        return redirect()->route('events.index')
+        return redirect()->route('admin.events.index')
             ->with('success','Event Updated Successfully');
     }
 
@@ -59,7 +59,7 @@ class EventController extends Controller
     {
         $event->delete();
 
-        return redirect()->route('events.index')
+        return redirect()->route('admin.events.index')
             ->with('success','Event Deleted Successfully');
     }
 }

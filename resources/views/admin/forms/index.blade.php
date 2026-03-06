@@ -2,17 +2,15 @@
 
 @section('content')
 
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-
 <style>
 /* ════════════════════════════════════════════
-   EVENTS PAGE — inherits ALL tokens from
+   FORMS PAGE — inherits ALL tokens from
    the layout's [data-theme] variables.
    NO hardcoded colours here.
 ════════════════════════════════════════════ */
-.ep *, .ep *::before, .ep *::after { box-sizing: border-box; }
+.fp *, .fp *::before, .fp *::after { box-sizing: border-box; }
 
-.ep {
+.fp {
     font-family: 'Plus Jakarta Sans', sans-serif;
     background: var(--bg);
     min-height: 100vh;
@@ -24,18 +22,18 @@
 }
 
 /* Ambient glow — subtle in dark, near-invisible in light */
-.ep::before {
+.fp::before {
     content: '';
     position: fixed; inset: 0; pointer-events: none; z-index: 0;
 }
-[data-theme="dark"]  .ep::before {
+[data-theme="dark"]  .fp::before {
     background:
-        radial-gradient(ellipse 80% 50% at 15% -5%,  rgba(245,158,11,0.07) 0%, transparent 55%),
-        radial-gradient(ellipse 55% 45% at 85% 105%, rgba(139,92,246,0.07) 0%, transparent 55%);
+        radial-gradient(ellipse 80% 50% at 15% -5%,  rgba(12,201,232,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 55% 45% at 85% 105%, rgba(12,201,232,0.07) 0%, transparent 55%);
 }
-[data-theme="light"] .ep::before { background: none; }
+[data-theme="light"] .fp::before { background: none; }
 
-.ep > * { position: relative; z-index: 1; }
+.fp > * { position: relative; z-index: 1; }
 
 /* ── PAGE BAR ── */
 .pg-bar {
@@ -102,11 +100,15 @@
 /* Dark mode glows */
 [data-theme="dark"] .ev-stat.s-amber::before { background: linear-gradient(90deg,transparent,#F59E0B,transparent); box-shadow: 0 0 8px rgba(245,158,11,.5); }
 [data-theme="dark"] .ev-stat.s-blue::before  { background: linear-gradient(90deg,transparent,#3B82F6,transparent); box-shadow: 0 0 8px rgba(59,130,246,.5); }
+[data-theme="dark"] .ev-stat.s-cyan::before  { background: linear-gradient(90deg,transparent,#0CC9E8,transparent); box-shadow: 0 0 8px rgba(12,201,232,.5); }
+[data-theme="dark"] .ev-stat.s-green::before { background: linear-gradient(90deg,transparent,#1FD57A,transparent); box-shadow: 0 0 8px rgba(31,213,122,.5); }
 [data-theme="dark"] .ev-stat.s-violet::before{ background: linear-gradient(90deg,transparent,#8B5CF6,transparent); box-shadow: 0 0 8px rgba(139,92,246,.5); }
 
 /* Light mode top lines — solid, visible */
 [data-theme="light"] .ev-stat.s-amber::before { background: var(--amber); height: 2px; box-shadow: none; opacity: .6; }
 [data-theme="light"] .ev-stat.s-blue::before  { background: var(--blue);  height: 2px; box-shadow: none; opacity: .6; }
+[data-theme="light"] .ev-stat.s-cyan::before  { background: var(--cyan);  height: 2px; box-shadow: none; opacity: .6; }
+[data-theme="light"] .ev-stat.s-green::before { background: var(--green); height: 2px; box-shadow: none; opacity: .6; }
 [data-theme="light"] .ev-stat.s-violet::before{ background: var(--violet);height: 2px; box-shadow: none; opacity: .6; }
 
 .ev-stat:hover { background: var(--bg-card-hov); border-color: var(--bdr-hi); box-shadow: var(--shadow); }
@@ -121,10 +123,14 @@
 
 [data-theme="dark"] .s-amber .ev-stat-ico { background: rgba(245,158,11,.15); color: #FCD34D; }
 [data-theme="dark"] .s-blue  .ev-stat-ico { background: rgba(59,130,246,.15);  color: #93C5FD; }
+[data-theme="dark"] .s-cyan  .ev-stat-ico { background: rgba(12,201,232,.15);  color: #22D3EE; }
+[data-theme="dark"] .s-green .ev-stat-ico { background: rgba(31,213,122,.15); color: #86EFAC; }
 [data-theme="dark"] .s-violet .ev-stat-ico { background: rgba(139,92,246,.15); color: #C4B5FD; }
 
 [data-theme="light"] .s-amber .ev-stat-ico { background: rgba(180,83,9,.1);   color: var(--amber);  }
 [data-theme="light"] .s-blue  .ev-stat-ico { background: rgba(29,78,216,.1);  color: var(--blue);   }
+[data-theme="light"] .s-cyan  .ev-stat-ico { background: rgba(6,182,212,.1);  color: var(--cyan);   }
+[data-theme="light"] .s-green .ev-stat-ico { background: rgba(34,197,94,.1);  color: var(--green);  }
 [data-theme="light"] .s-violet .ev-stat-ico { background: rgba(109,40,217,.1); color: var(--violet); }
 
 /* Stat values */
@@ -135,10 +141,14 @@
 }
 [data-theme="dark"] .s-amber  .ev-stat-val { color: #FDE68A; }
 [data-theme="dark"] .s-blue   .ev-stat-val { color: #BFDBFE; }
+[data-theme="dark"] .s-cyan   .ev-stat-val { color: #06B6D4; }
+[data-theme="dark"] .s-green  .ev-stat-val { color: #4ADE80; }
 [data-theme="dark"] .s-violet .ev-stat-val { color: #DDD6FE; }
 
 [data-theme="light"] .s-amber  .ev-stat-val { color: #78350f; }
 [data-theme="light"] .s-blue   .ev-stat-val { color: #1e3a8a; }
+[data-theme="light"] .s-cyan   .ev-stat-val { color: #0e7490; }
+[data-theme="light"] .s-green  .ev-stat-val { color: #15803d; }
 [data-theme="light"] .s-violet .ev-stat-val { color: #4c1d95; }
 
 .ev-stat-lbl {
@@ -372,8 +382,8 @@
 .modal-confirm:hover { box-shadow: 0 6px 20px rgba(244,63,94,.4); transform: translateY(-1px); }
 
 /* ── Scrollbar ── */
-[data-theme="dark"]  .ep ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.09); }
-[data-theme="light"] .ep ::-webkit-scrollbar-thumb { background: rgba(15,30,60,.15); }
+[data-theme="dark"]  .fp ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.09); }
+[data-theme="light"] .fp ::-webkit-scrollbar-thumb { background: rgba(15,30,60,.15); }
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 
@@ -385,7 +395,7 @@
 
 /* ── Responsive ── */
 @media(max-width:900px) {
-    .ep { padding: 1.2rem 1.1rem 4rem; }
+    .fp { padding: 1.2rem 1.1rem 4rem; }
     .ev-stats { grid-template-columns: 1fr 1fr; }
     .tbl-search input { width: 140px; }
     .desc-text { max-width: 150px; }
@@ -399,12 +409,13 @@
 </style>
 
 @php
-    $total    = $events->count();
-    $upcoming = $events->filter(fn($e) => \Carbon\Carbon::parse($e->event_date)->isFuture())->count();
-    $past     = $total - $upcoming;
+    $total    = 0; // count($forms) when connected to database
+    $pending  = 0;
+    $approved = 0;
+    $rejected = 0;
 @endphp
 
-<div class="ep">
+<div class="fp">
 
     {{-- ── DELETE CONFIRM MODAL ── --}}
     <div class="modal-overlay" id="delModal">
@@ -417,7 +428,7 @@
                     <path d="M9 6V4h6v2"/>
                 </svg>
             </div>
-            <div class="modal-title">Delete Event</div>
+            <div class="modal-title">Delete Form</div>
             <div class="modal-body">
                 Are you sure you want to delete
                 <span class="modal-event-name" id="delEventName"></span>?
@@ -436,14 +447,14 @@
     {{-- ── PAGE BAR ── --}}
     <div class="pg-bar">
         <div>
-            <div class="pg-title">Events Management</div>
-            <div class="pg-sub">Manage and schedule NCC cadet events</div>
+            <div class="pg-title">Forms Management</div>
+            <div class="pg-sub">Manage and review cadet forms and applications</div>
         </div>
-        <a href="{{ route('admin.events.create') }}" class="btn btn-green">
+        <a href="{{ route('admin.forms.create') }}" class="btn btn-green">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
-            Add Event
+            Add Form
         </a>
     </div>
 
@@ -459,21 +470,29 @@
 
     {{-- ── STATS ── --}}
     <div class="ev-stats">
-        <div class="ev-stat s-amber">
+        <div class="ev-stat s-cyan">
             <div class="ev-stat-ico">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <rect x="3" y="4" width="18" height="18" rx="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/>
-                    <line x1="8"  y1="2" x2="8"  y2="6"/>
-                    <line x1="3"  y1="10" x2="21" y2="10"/>
+                    <path d="M9 12h6m-6 4h6m2-8H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/>
                 </svg>
             </div>
             <div>
                 <div class="ev-stat-val">{{ $total }}</div>
-                <div class="ev-stat-lbl">Total Events</div>
+                <div class="ev-stat-lbl">Total Forms</div>
             </div>
         </div>
-        <div class="ev-stat s-blue">
+        <div class="ev-stat s-green">
+            <div class="ev-stat-ico">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            </div>
+            <div>
+                <div class="ev-stat-val">{{ $approved }}</div>
+                <div class="ev-stat-lbl">Approved</div>
+            </div>
+        </div>
+        <div class="ev-stat s-amber">
             <div class="ev-stat-ico">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10"/>
@@ -481,20 +500,8 @@
                 </svg>
             </div>
             <div>
-                <div class="ev-stat-val">{{ $upcoming }}</div>
-                <div class="ev-stat-lbl">Upcoming Events</div>
-            </div>
-        </div>
-        <div class="ev-stat s-violet">
-            <div class="ev-stat-ico">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <polyline points="9 11 12 14 22 4"/>
-                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-                </svg>
-            </div>
-            <div>
-                <div class="ev-stat-val">{{ $past }}</div>
-                <div class="ev-stat-lbl">Completed Events</div>
+                <div class="ev-stat-val">{{ $pending }}</div>
+                <div class="ev-stat-lbl">Pending Review</div>
             </div>
         </div>
     </div>
@@ -506,28 +513,41 @@
                 <circle cx="11" cy="11" r="8"/>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input type="text" id="evSearch" placeholder="Search events, units…">
+            <input type="text" id="evSearch" placeholder="Search forms, cadets…">
         </div>
-        <span class="tbl-count" id="evCount">{{ $total }} event{{ $total !== 1 ? 's' : '' }}</span>
+        <span class="tbl-count" id="evCount">{{ $total }} form{{ $total !== 1 ? 's' : '' }}</span>
+    </div>
+
+    {{-- ── FILTER TABS ── --}}
+    <div style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap;">
+        <a href="{{ route('admin.forms.index') }}" class="btn" style="padding:7px 13px;background:var(--blue);border:1px solid var(--blue);color:#fff;font-size:0.75rem;text-decoration:none;">
+            All Forms ({{ $total }})
+        </a>
+        <a href="{{ route('admin.forms.pending') }}" class="btn" style="padding:7px 13px;background:transparent;border:1px solid var(--bdr);color:var(--tx2);font-size:0.75rem;text-decoration:none;">
+            Pending ({{ $pending }})
+        </a>
+        <a href="{{ route('admin.forms.approved') }}" class="btn" style="padding:7px 13px;background:transparent;border:1px solid var(--bdr);color:var(--tx2);font-size:0.75rem;text-decoration:none;">
+            Approved ({{ $approved }})
+        </a>
+        <a href="{{ route('admin.forms.rejected') }}" class="btn" style="padding:7px 13px;background:transparent;border:1px solid var(--bdr);color:var(--tx2);font-size:0.75rem;text-decoration:none;">
+            Rejected ({{ $rejected }})
+        </a>
     </div>
 
     {{-- ── TABLE PANEL ── --}}
     <div class="tbl-panel">
         <div class="tbl-hd">
-            <div class="tbl-ttl">All Events</div>
+            <div class="tbl-ttl">All Forms</div>
             <span class="tbl-badge">{{ $total }} Total</span>
         </div>
 
-        @if($events->count() == 0)
+        @if($total == 0)
         <div class="empty-state">
             <svg fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24">
-                <rect x="3" y="4" width="18" height="18" rx="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8"  y1="2" x2="8"  y2="6"/>
-                <line x1="3"  y1="10" x2="21" y2="10"/>
+                <path d="M9 12h6m-6 4h6m2-8H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/>
             </svg>
-            <p>No events created yet</p>
-            <span>Click "Add Event" to create your first event</span>
+            <p>No forms submitted yet</p>
+            <span>Forms submitted by cadets will appear here</span>
         </div>
         @else
 
@@ -536,64 +556,56 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Event</th>
-                        <th>Unit</th>
-                        <th>Date</th>
-                        <th>Description</th>
+                        <th>Form Title</th>
+                        <th>Submitted By</th>
+                        <th>Status</th>
+                        <th>Date Submitted</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($events as $event)
-                    <tr>
-                        <td style="color:var(--tx3); font-variant-numeric:tabular-nums; font-size:.75rem;">
-                            {{ $loop->iteration }}
-                        </td>
+                    <!-- Sample row - replace with actual data -->
+                    <tr style="display:none;">
+                        <td style="color:var(--tx3); font-variant-numeric:tabular-nums; font-size:.75rem;">1</td>
                         <td>
                             <div class="ev-title-cell">
                                 <div class="ev-icon">
                                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <rect x="3" y="4" width="18" height="18" rx="2"/>
-                                        <line x1="16" y1="2" x2="16" y2="6"/>
-                                        <line x1="8"  y1="2" x2="8"  y2="6"/>
-                                        <line x1="3"  y1="10" x2="21" y2="10"/>
+                                        <path d="M9 12h6m-6 4h6m2-8H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/>
                                     </svg>
                                 </div>
                                 <div>
-                                    <div class="ev-title-text">{{ $event->title }}</div>
-                                    <div class="ev-title-sub">ID #{{ $event->id }}</div>
+                                    <div class="ev-title-text">Sample Form</div>
+                                    <div class="ev-title-sub">ID #1</div>
                                 </div>
                             </div>
                         </td>
                         <td>
                             <span class="unit-badge">
                                 <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 15 15"/>
                                 </svg>
-                                {{ $event->unit->unit_name ?? 'N/A' }}
+                                Cadet Name
                             </span>
                         </td>
                         <td>
-                            <span class="date-badge">
-                                {{ \Carbon\Carbon::parse($event->event_date)->format('d M Y') }}
+                            <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:.7rem;font-weight:600;background:rgba(31,213,122,.1);border:1px solid rgba(31,213,122,.22);color:#86EFAC;">
+                                Approved
                             </span>
                         </td>
                         <td>
-                            <div class="desc-text" title="{{ $event->description }}">
-                                {{ $event->description ?? '—' }}
-                            </div>
+                            <span class="date-badge">15 Feb 2025</span>
                         </td>
                         <td>
                             <div class="act-row">
-                                <a href="{{ route('admin.events.edit', $event->id) }}" class="act-btn act-btn-edit">
+                                <a href="#" class="act-btn act-btn-edit">
                                     <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                                     </svg>
-                                    Edit
+                                    View
                                 </a>
-                                <button class="act-btn act-btn-del"
-                                    onclick="openDeleteModal('{{ addslashes($event->title) }}', '{{ route('admin.events.destroy', $event->id) }}')">
+                                <button class="act-btn act-btn-del" onclick="openDeleteModal('Sample Form', '#')">
                                     <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <polyline points="3 6 5 6 21 6"/>
                                         <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
@@ -603,13 +615,11 @@
                             </div>
                         </td>
                     </tr>
-                    @endforeach
                 </tbody>
-            </table>
         </div>
 
         <div class="tbl-ft">
-            <span id="evTableCount">Showing {{ $events->count() }} events</span>
+            <span id="evTableCount">Showing {{ $total }} form{{ $total !== 1 ? 's' : '' }}</span>
             <span>Last updated · {{ now()->format('H:i:s') }}</span>
         </div>
         @endif
@@ -637,15 +647,15 @@ document.getElementById('evSearch').addEventListener('input', function () {
             if (!noRes) {
                 noRes = document.createElement('tr');
                 noRes.id = 'noEvRow';
-                noRes.innerHTML = `<td colspan="6" style="text-align:center;padding:2.5rem;color:var(--tx3);font-size:.82rem;">No events matching "<strong style='color:var(--tx2)'>${q}</strong>"</td>`;
+                noRes.innerHTML = `<td colspan="6" style="text-align:center;padding:2.5rem;color:var(--tx3);font-size:.82rem;">No forms matching "<strong style='color:var(--tx2)'>${q}</strong>"</td>`;
                 document.querySelector('#evTable tbody').appendChild(noRes);
             }
         } else if (noRes) noRes.remove();
 
         const countEl  = document.getElementById('evTableCount');
         const topCount = document.getElementById('evCount');
-        if (countEl)  countEl.textContent  = q ? `Showing ${visible} of ${rows.length} events` : `Showing ${rows.length} events`;
-        if (topCount) topCount.textContent = q ? `${visible} result${visible !== 1 ? 's' : ''}` : `${rows.length} event${rows.length !== 1 ? 's' : ''}`;
+        if (countEl)  countEl.textContent  = q ? `Showing ${visible} of ${rows.length} form${rows.length !== 1 ? 's' : ''}` : `Showing ${rows.length} form${rows.length !== 1 ? 's' : ''}`;
+        if (topCount) topCount.textContent = q ? `${visible} result${visible !== 1 ? 's' : ''}` : `${rows.length} form${rows.length !== 1 ? 's' : ''}`;
     }, 160);
 });
 

@@ -12,7 +12,7 @@
         </div>
 
         <div class="d-flex gap-2">
-            <a href="{{ route('cadets.create') }}" class="btn btn-primary">
+            <a href="{{ route('admin.cadets.create') }}" class="btn btn-primary">
                 <i class="bi bi-person-plus"></i> Add Cadet
             </a>
         </div>
@@ -61,13 +61,13 @@
                                 </td>
 
                                 <td class="text-center">
-                                    <a href="{{ route('cadets.edit', $cadet) }}"
+                                    <a href="{{ route('admin.cadets.edit', $cadet) }}"
                                        class="btn btn-sm btn-outline-warning">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
 
                                     <form method="POST"
-                                          action="{{ route('cadets.destroy', $cadet) }}"
+                                          action="{{ route('admin.cadets.destroy', $cadet) }}"
                                           class="d-inline"
                                           onsubmit="return confirm('Are you sure you want to delete this cadet?')">
                                         @csrf

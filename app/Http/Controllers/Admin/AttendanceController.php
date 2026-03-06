@@ -11,15 +11,15 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $attendances = Attendance::with(['cadet.user', 'event'])
-            ->whereHas('cadet.user', function ($q) {
-                $q->where('role', 'student');
-            })
-            ->get();
+        // Adjust ordering/fields to match your Event model
+        $events = Event::orderBy('created_at', 'desc')->get();
 
-        return view('admin.attendance.index', compact('attendances'));
+        // Load cadets with their user relation used in the view
+        $cadets = Cadet::with('user')->orderBy('created_at', 'desc')->get();
+
+        return view('admin.attendance.index', compact('events', 'cadets'));
     }
 
     public function create()
@@ -54,7 +54,7 @@ class AttendanceController extends Controller
             );
         }
 
-        return redirect()->route('attendance.index')
+        return redirect()->route('admin.attendance.index')
             ->with('success', 'Attendance saved successfully');
     }
 

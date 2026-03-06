@@ -11,9 +11,18 @@ class UnitController extends Controller
     // ===============================
     // Display All Units
     // ===============================
-    public function index()
+    public function index(Request $request)
     {
-        $units = Unit::latest()->get();
+        $query = Unit::query();
+
+        if ($q = $request->query('q')) {
+            // table uses "unit_name" column
+            $query->where('unit_name', 'like', "%{$q}%");
+        }
+
+        // Return a paginator so ->total() and ->links() work in the view
+        $units = $query->orderBy('created_at', 'desc')->paginate(15);
+
         return view('admin.units.index', compact('units'));
     }
 
@@ -28,19 +37,19 @@ class UnitController extends Controller
     // ===============================
     // Store New Unit
     // ===============================
-   public function store(Request $request)
-{
-    $request->validate([
-        'unit_name' => 'required',
-        'battalion' => 'required',
-        'state' => 'required'
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'unit_name' => 'required',
+            'battalion' => 'required',
+            'state' => 'required'
+        ]);
 
-    Unit::create($request->all());
+        Unit::create($request->all());
 
-    return redirect()->route('units.index')
-        ->with('success','Unit Created Successfully');
-}
+        return redirect()->route('admin.units.index')
+            ->with('success', 'Unit Created Successfully');
+    }
 
     // ===============================
     // Show Edit Form
@@ -55,21 +64,20 @@ class UnitController extends Controller
     // ===============================
     public function update(Request $request, Unit $unit)
     {
+        // Validate fields that actually exist on units table
         $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:units,code,' . $unit->id,
-            'description' => 'nullable|string'
+            'unit_name' => 'required|string|max:255',
+            'battalion' => 'required|string|max:255',
+            'state' => 'nullable|string|max:255',
         ]);
 
         $unit->update([
-            'name' => $request->name,
-            'code' => $request->code,
-            'description' => $request->description
+            'unit_name' => $request->unit_name,
+            'battalion' => $request->battalion,
+            'state' => $request->state,
         ]);
 
-        return redirect()
-            ->route('units.index')
-            ->with('success', 'Unit updated successfully.');
+        return redirect()->route('admin.units.index')->with('success', 'Unit updated successfully.');
     }
 
     // ===============================
@@ -79,8 +87,6 @@ class UnitController extends Controller
     {
         $unit->delete();
 
-        return redirect()
-            ->route('units.index')
-            ->with('success', 'Unit deleted successfully.');
+        return redirect()->route('admin.units.index')->with('success', 'Unit deleted successfully.');
     }
 }
