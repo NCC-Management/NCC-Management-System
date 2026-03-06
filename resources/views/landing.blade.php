@@ -33,11 +33,11 @@
     </style>
 </head>
 
-{{-- x-data: set initial modal state based on server validation errors (keeps UI unchanged) --}}
+{{-- x-data: persists modal state and determines which tab to show based on specific error types --}}
 <body class="bg-gray-50 antialiased text-gray-800 relative overflow-x-hidden"
       x-data="{ 
         showAuthModal: {{ $errors->any() ? 'true' : 'false' }}, 
-        isLogin: {{ ($errors->has('first_name') || $errors->has('student_id') || $errors->has('course') || $errors->has('password') || $errors->has('password_confirmation')) ? 'false' : 'true' }}, 
+        isLogin: {{ ($errors->has('first_name') || $errors->has('last_name') || $errors->has('password_confirmation')) ? 'false' : 'true' }}, 
         scrolled: false, mobileMenu: false 
       }"
       @scroll.window="scrolled = (window.pageYOffset > 20)">
@@ -342,8 +342,6 @@
                  x-transition:enter-start="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95" 
                  x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
                  x-transition:leave="ease-in duration-200" 
-                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
-                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
                  class="relative transform overflow-hidden rounded-[2.5rem] bg-white text-left shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] ring-1 ring-black/5 transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 
                 <button @click="showAuthModal = false" class="absolute top-6 right-6 text-gray-400 hover:text-gray-800 bg-gray-50 hover:bg-gray-200 rounded-full p-2.5 transition-colors focus:outline-none focus:ring-2 focus:ring-theme-green/50 z-10">
@@ -365,13 +363,28 @@
                             <h3 class="text-3xl font-extrabold text-gray-900 tracking-tight">Welcome Back</h3>
                             <p class="text-sm text-gray-500 mt-2 font-medium">Enter your secure credentials to access the portal.</p>
                         </div>
-                        <form method="POST" action="{{ route('login') }}" class="space-y-5">
+                        <form method="POST" action="{{ route('login.custom') }}" class="space-y-5">
                             @csrf
+
+                            @if ($errors->has('email'))
+                            <p class="text-red-500 text-xs mt-2 ml-1 font-semibold animate-fade-in-up">
+                                {{ $errors->first('email') }}
+                            </p>
+                        @endif
+
                             <div>
-                                <input type="email" name="email" placeholder="Email Address" class="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:bg-white focus:outline-none focus:border-theme-green focus:ring-4 focus:ring-theme-green/10 transition-all font-medium placeholder-gray-400" required>
+                                <input type="email" name="email" value="{{ old('email') }}" placeholder="Email Address" 
+                                       class="w-full px-5 py-4 bg-gray-50/50 border rounded-2xl focus:bg-white focus:outline-none focus:border-theme-green focus:ring-4 focus:ring-theme-green/10 transition-all font-medium placeholder-gray-400 @error('email') border-red-500 @else border-gray-200 @enderror" required>
+                                @error('email')
+                                    <p class="text-red-500 text-xs mt-2 ml-1 font-semibold animate-fade-in-up">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div>
-                                <input type="password" name="password" placeholder="Password" class="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:bg-white focus:outline-none focus:border-theme-green focus:ring-4 focus:ring-theme-green/10 transition-all font-medium placeholder-gray-400" required>
+                                <input type="password" name="password" placeholder="Password" 
+                                       class="w-full px-5 py-4 bg-gray-50/50 border rounded-2xl focus:bg-white focus:outline-none focus:border-theme-green focus:ring-4 focus:ring-theme-green/10 transition-all font-medium placeholder-gray-400 @error('password') border-red-500 @else border-gray-200 @enderror" required>
+                                @error('password')
+                                    <p class="text-red-500 text-xs mt-2 ml-1 font-semibold animate-fade-in-up">{{ $message }}</p>
+                                @enderror
                             </div>
                             
                             <div class="flex items-center justify-between px-1 py-1">
@@ -380,7 +393,6 @@
                                 </label>
                                 <a href="#" class="text-sm font-bold text-theme-green hover:text-gray-900 transition-colors">Forgot password?</a>
                             </div>
-                            
                             
                             <button type="submit" class="w-full bg-gray-900 text-white font-bold py-4 rounded-2xl hover:bg-theme-green transition-colors shadow-lg mt-4">Sign In securely</button>
                         </form>
@@ -392,37 +404,39 @@
                             <p class="text-sm text-gray-500 mt-2 font-medium">Begin your journey of unity and discipline today.</p>
                         </div>
 
-                        {{-- Registration form with updated matching styling and required JS IDs --}}
                         <form method="POST" action="{{ route('register') }}" id="cadet-register-form" class="space-y-4">
                             @csrf
-                            
                             <input type="hidden" name="name" id="full_name">
 
                             <div class="grid grid-cols-2 gap-4">
-                                <input type="text" name="first_name" id="first_name" placeholder="First Name"
-                                    class="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:bg-white focus:outline-none focus:border-theme-green focus:ring-4 focus:ring-theme-green/10 transition-all font-medium placeholder-gray-400"
-                                    required>
-
-                                <input type="text" name="last_name" id="last_name" placeholder="Last Name"
-                                    class="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:bg-white focus:outline-none focus:border-theme-green focus:ring-4 focus:ring-theme-green/10 transition-all font-medium placeholder-gray-400"
-                                    required>
+                                <div>
+                                    <input type="text" name="first_name" id="first_name" value="{{ old('first_name') }}" placeholder="First Name"
+                                        class="w-full px-5 py-4 bg-gray-50/50 border rounded-2xl focus:bg-white focus:outline-none focus:border-theme-green focus:ring-4 focus:ring-theme-green/10 transition-all font-medium placeholder-gray-400 @error('first_name') border-red-500 @else border-gray-200 @enderror" required>
+                                    @error('first_name') <p class="text-red-500 text-[10px] mt-1 font-bold">{{ $message }}</p> @enderror
+                                </div>
+                                <div>
+                                    <input type="text" name="last_name" id="last_name" value="{{ old('last_name') }}" placeholder="Last Name"
+                                        class="w-full px-5 py-4 bg-gray-50/50 border rounded-2xl focus:bg-white focus:outline-none focus:border-theme-green focus:ring-4 focus:ring-theme-green/10 transition-all font-medium placeholder-gray-400 @error('last_name') border-red-500 @else border-gray-200 @enderror" required>
+                                    @error('last_name') <p class="text-red-500 text-[10px] mt-1 font-bold">{{ $message }}</p> @enderror
+                                </div>
                             </div>
 
-                            <input type="email" name="email" placeholder="Email Address"
-                                class="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:bg-white focus:outline-none focus:border-theme-green focus:ring-4 focus:ring-theme-green/10 transition-all font-medium placeholder-gray-400"
-                                required>
+                            <div>
+                                <input type="email" name="email" value="{{ old('email') }}" placeholder="Email Address"
+                                    class="w-full px-5 py-4 bg-gray-50/50 border rounded-2xl focus:bg-white focus:outline-none focus:border-theme-green focus:ring-4 focus:ring-theme-green/10 transition-all font-medium placeholder-gray-400 @error('email') border-red-500 @else border-gray-200 @enderror" required>
+                                @error('email') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
+                            </div>
 
-                            <input type="password" name="password" placeholder="Create Password"
-                                class="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:bg-white focus:outline-none focus:border-theme-green focus:ring-4 focus:ring-theme-green/10 transition-all font-medium placeholder-gray-400"
-                                required>
+                            <div>
+                                <input type="password" name="password" placeholder="Create Password"
+                                    class="w-full px-5 py-4 bg-gray-50/50 border rounded-2xl focus:bg-white focus:outline-none focus:border-theme-green focus:ring-4 focus:ring-theme-green/10 transition-all font-medium placeholder-gray-400 @error('password') border-red-500 @else border-gray-200 @enderror" required>
+                                @error('password') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
+                            </div>
 
-                            <input type="password" name="password_confirmation"
-                                placeholder="Confirm Password"
-                                class="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:bg-white focus:outline-none focus:border-theme-green focus:ring-4 focus:ring-theme-green/10 transition-all font-medium placeholder-gray-400"
-                                required>
+                            <input type="password" name="password_confirmation" placeholder="Confirm Password"
+                                class="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:bg-white focus:outline-none focus:border-theme-green focus:ring-4 focus:ring-theme-green/10 transition-all font-medium placeholder-gray-400" required>
 
-                            <button type="submit"
-                                class="w-full bg-theme-green text-white font-bold py-4 rounded-2xl hover:bg-[#1a332a] transition-all shadow-[0_8px_20px_-6px_rgba(44,82,67,0.5)] hover:shadow-[0_12px_25px_-6px_rgba(44,82,67,0.6)] hover:-translate-y-0.5 mt-2">
+                            <button type="submit" class="w-full bg-theme-green text-white font-bold py-4 rounded-2xl hover:bg-gray-900 transition-colors shadow-lg mt-2">
                                 Submit Application
                             </button>
                         </form>
@@ -432,23 +446,14 @@
         </div>
     </div>
 
-    {{-- Minimal JS to ensure hidden fields are populated before submit (doesn't change UI) --}}
     <script>
-        (function () {
-            const form = document.getElementById('cadet-register-form');
-            if (!form) return;
-
-            form.addEventListener('submit', function (e) {
-                const fn = (document.getElementById('first_name')?.value || '').trim();
-                const ln = (document.getElementById('last_name')?.value || '').trim();
-                document.getElementById('full_name').value = (fn + ' ' + ln).trim();
-
-                // phone is optional; leave empty unless you want to populate it here.
-                // document.getElementById('phone').value = '';
-
-                // no return false — allow normal submission
-            });
-        })();
+        // Logic to concatenate names for Laravel compatibility
+        document.getElementById('cadet-register-form')?.addEventListener('submit', function() {
+            const first = document.getElementById('first_name').value;
+            const last = document.getElementById('last_name').value;
+            document.getElementById('full_name').value = first + ' ' + last;
+        });
     </script>
+
 </body>
 </html>

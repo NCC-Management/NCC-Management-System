@@ -18,28 +18,27 @@ class WebAuthController extends Controller
     |--------------------------------------------------------------------------
     */
     public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email'    => ['required', 'email'],
-            'password' => ['required', 'string'],
+{
+    $credentials = $request->validate([
+        'email'    => ['required', 'email'],
+        'password' => ['required', 'string'],
+    ]);
+
+    if (!Auth::attempt($credentials, $request->boolean('remember'))) {
+        throw ValidationException::withMessages([
+            'email' => ['Invalid credentials.'],
         ]);
-
-        if (!Auth::attempt($credentials, $request->boolean('remember'))) {
-            throw ValidationException::withMessages([
-                'email' => 'Invalid credentials.',
-            ]);
-        }
-
-        // Prevent session fixation
-        $request->session()->regenerate();
-
-        // Redirect based on role
-        return match (Auth::user()->role) {
-            'admin'  => redirect()->route('admin.dashboard'),
-            'cadet'  => redirect()->route('cadet.dashboard'),
-            default  => redirect()->route('home'),
-        };
     }
+
+    $request->session()->regenerate();
+
+    return match (Auth::user()->role) {
+        'admin'  => redirect()->route('admin.dashboard'),
+        'cadet'  => redirect()->route('cadet.dashboard'),
+        default  => redirect()->route('home'),
+    };
+}
+
 
     /*
     |--------------------------------------------------------------------------
