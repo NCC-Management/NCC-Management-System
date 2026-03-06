@@ -14,7 +14,7 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create a test admin user
+        // Create primary admin user
         User::firstOrCreate(
             ['email' => 'admin@example.com'],
             [
@@ -25,19 +25,19 @@ class AdminUserSeeder extends Seeder
             ]
         );
 
-        // Create a test cadet user
+        // Create secondary admin user (for testing)
         User::firstOrCreate(
-            ['email' => 'cadet@example.com'],
+            ['email' => 'yash@gmail.com'],
             [
-                'name' => 'Test Cadet',
+                'name' => 'Yash Admin',
                 'password' => Hash::make('password'),
-                'role' => 'cadet',
-                'phone' => '+0987654321',
+                'role' => 'admin',
+                'phone' => '+1987654321',
             ]
         );
 
-        echo "✅ Admin and Cadet test users created/verified!\n";
-        echo "Admin: admin@example.com (password: password)\n";
-        echo "Cadet: cadet@example.com (password: password)\n";
+        echo "✅ Admin users created/verified!\n";
+        echo "Admin 1: admin@example.com (password: password)\n";
+        echo "Admin 2: yash@gmail.com (password: password)\n";
     }
 }
