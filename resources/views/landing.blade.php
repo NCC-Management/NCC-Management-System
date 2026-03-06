@@ -363,7 +363,7 @@
                             <h3 class="text-3xl font-extrabold text-gray-900 tracking-tight">Welcome Back</h3>
                             <p class="text-sm text-gray-500 mt-2 font-medium">Enter your secure credentials to access the portal.</p>
                         </div>
-                        <form method="POST" action="{{ route('login.custom') }}" class="space-y-5">
+                        <form method="POST" action="{{ route('login.post') }}" class="space-y-5">
                             @csrf
 
                             @if ($errors->has('email'))
