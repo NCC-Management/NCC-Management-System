@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\WebAuthController;
-use App\Http\Controllers\CadetController;
+use App\Http\Controllers\Cadet\CadetController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CadetController as AdminCadetController;
 use App\Http\Controllers\Admin\UnitController;
@@ -18,9 +18,6 @@ use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 */
 
 Route::get('/', function () {
-    if (auth()->check()) {
-        return auth()->user()->role === 'admin' ? redirect()->route('admin.dashboard') : redirect()->route('cadet.dashboard');
-    }
     return view('landing');
 })->name('home');
 
@@ -33,16 +30,8 @@ Route::get('/', function () {
 
 Route::middleware('guest')->group(function () {
 
-    Route::get('/login', function () {
-        return view('landing');
-    })->name('login');
-    
     Route::post('/login', [WebAuthController::class, 'login'])->name('login.post');
 
-    Route::get('/register', function () {
-        return view('landing');
-    })->name('register');
-    
     Route::post('/register', [WebAuthController::class, 'register'])->name('register.post');
 });
 
