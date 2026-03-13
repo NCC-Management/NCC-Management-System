@@ -102,6 +102,45 @@ class CadetController extends Controller
         return back()->with('success', 'Cadet deleted');
     }
 
+    /**
+     * Show cadet details
+     */
+    public function show($id)
+    {
+        $cadet = \App\Models\Cadet::with('user')->findOrFail($id);
+
+        return view('admin.cadets.show', compact('cadet'));
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pending Approvals
+    |--------------------------------------------------------------------------
+    */
+    public function pendingApprovals()
+    {
+        $pending  = Cadet::with('user')->where('status', 'pending')->latest()->get();
+        $approved = Cadet::with('user')->where('status', 'approved')->latest()->get();
+        $rejected = Cadet::with('user')->where('status', 'rejected')->latest()->get();
+
+        return view('admin.cadets.approvals', compact('pending', 'approved', 'rejected'));
+    }
+
+    public function approve(Cadet $cadet)
+    {
+        $cadet->update(['status' => 'approved']);
+        return back()->with('success', 'Cadet approved successfully.');
+    }
+
+    public function reject(Request $request, Cadet $cadet)
+    {
+        $cadet->update([
+            'status'           => 'rejected',
+            'rejection_reason' => $request->input('reason', 'Application rejected by admin.'),
+        ]);
+        return back()->with('success', 'Cadet rejected.');
+    }
+
     /* ===========================
        EXPORT FUNCTIONS
     ============================ */

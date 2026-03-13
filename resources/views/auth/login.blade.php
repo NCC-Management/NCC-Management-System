@@ -15,7 +15,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('login.custom')}}">
+    <form method="POST" action="{{ route('login.post') }}">
         @csrf
 
         <div class="mb-4">

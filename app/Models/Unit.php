@@ -9,6 +9,14 @@ class Unit extends Model
     protected $fillable = [
         'unit_name',
         'battalion',
-        'state'
+        'state',
+        'officer_name',
+        'location',
+        'contact',
     ];
+
+    public function cadets()
+    {
+        return $this->hasMany(Cadet::class);
+    }
 }

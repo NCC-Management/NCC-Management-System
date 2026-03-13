@@ -423,30 +423,7 @@
 
 <body class="{{ request()->routeIs('shows.*') ? 'full-screen' : '' }}">
 
-<script>
-// URL Masking - Hide actual routes and show clean appearance
-(function() {
-    // Mask the URL on page load - show only page name or #
-    const currentUrl = window.location.href;
-    const pathname = window.location.pathname;
-    
-    // Extract the last segment of the path (page name)
-    const segments = pathname.split('/').filter(s => s);
-    const pageName = segments[segments.length - 1] || 'dashboard';
-    
-    // Only mask admin routes
-    if (pathname.includes('/admin/')) {
-        // Replace history to show clean URL without exposing routes
-        // Show domain + # instead of full admin route
-        const baseUrl = window.location.origin + '/'; // e.g., http://127.0.0.1:8000/
-        window.history.replaceState(
-            { originalPath: pathname },
-            document.title,
-            baseUrl + '#' // Show just the hash, hiding the admin route
-        );
-    }
-})();
-</script>
+
 
 {{-- Mobile top bar --}}
 <div class="mob-bar" id="mobBar">
@@ -539,26 +516,34 @@
                         <div class="sub-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
                         <div><div class="sub-name">All Cadets</div><div class="sub-desc">View & search</div></div>
                     </a>
-                    <a href="#" class="sb-sub-item {{ request()->routeIs('admin.cadets.create') ? 'active':'' }}" onclick="navigateTo(event, '{{ route('admin.cadets.create') }}')">
-                        <div class="sub-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div>
-                        <div><div class="sub-name">Enrol Cadet</div><div class="sub-desc">Add new record</div></div>
-                    </a>
-                    <div class="sub-div"></div>
-                    <a href="#" class="sb-sub-item" onclick="navigateTo(event, '{{ route('admin.attendance.index') }}')">
-                        <div class="sub-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
-                        <div><div class="sub-name">Attendance</div><div class="sub-desc">Mark & view</div></div>
-                    </a>
-                    <a href="#" class="sb-sub-item" onclick="navigateTo(event, '{{ route('admin.cadets.index') }}')">
-                        <div class="sub-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-                        <div><div class="sub-name">Cadet Reports</div><div class="sub-desc">Export & print</div></div>
-                    </a>
-                    <a href="#" class="sb-sub-item" onclick="navigateTo(event, '{{ route('admin.cadets.index') }}')">
-                        <div class="sub-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
-                        <div><div class="sub-name">B/C Certificate</div><div class="sub-desc">Exam & results</div></div>
+                    <a href="#" class="sb-sub-item {{ request()->routeIs('admin.cadets.approvals') ? 'active':'' }}" onclick="navigateTo(event, '{{ route('admin.cadets.approvals') }}')">
+                        <div class="sub-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+                        <div>
+                            <div class="sub-name">Pending Approvals</div>
+                            <div class="sub-desc">
+                                Approve / reject
+                                @php $pendingCount = \App\Models\Cadet::where('status','pending')->count(); @endphp
+                                @if($pendingCount > 0) · <span style="color:#F59E0B;">{{ $pendingCount }}</span> pending @endif
+                            </div>
+                        </div>
                     </a>
                 </div>
             </div>
         </div>
+
+        {{-- Leave Requests --}}
+        <div class="sb-group grp-amber" data-key="leave" data-route="{{ route('admin.leave.index') }}">
+            <a href="#"
+               class="sb-item {{ request()->routeIs('admin.leave.*') ? 'is-amber' : '' }}"
+               onclick="navigateTo(event, '{{ route('admin.leave.index') }}', 'leave')">
+                <span class="sb-ico"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+                <span class="sb-lbl">Leave Requests</span>
+                <span class="sb-chev"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+                <span class="sb-tip">Leave Requests</span>
+            </a>
+        </div>
+
+
 
         {{-- Units --}}
         <div class="sb-group grp-violet" data-key="units" data-route="{{ route('admin.units.index') }}">

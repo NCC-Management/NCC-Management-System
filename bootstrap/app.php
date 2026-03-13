@@ -14,9 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
 
         $middleware->alias([
-            'admin' => \App\Http\Middleware\AdminMiddleware::class,
-            'cadet' => \App\Http\Middleware\CadetMiddleware::class,
-            'role'  => \App\Http\Middleware\RoleMiddleware::class,
+            'admin'                => \App\Http\Middleware\AdminMiddleware::class,
+            'cadet'                => \App\Http\Middleware\CadetMiddleware::class,
+            'cadet.approved'       => \App\Http\Middleware\CadetApprovedMiddleware::class,
+            'role'                 => \App\Http\Middleware\RoleMiddleware::class,
+            'prevent-back-history' => \App\Http\Middleware\PreventBackHistory::class,
         ]);
 
     })

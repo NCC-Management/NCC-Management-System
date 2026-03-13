@@ -5,6 +5,7 @@ namespace App\Actions\Fortify;
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
@@ -24,10 +25,20 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
-        return User::create([
-            'name' => $input['name'],
+        $user = User::create([
+            'name' => $input['name'] ?? trim(($input['first_name'] ?? '') . ' ' . ($input['last_name'] ?? '')),
             'email' => $input['email'],
-            'password' => $input['password'],
+            'password' => Hash::make($input['password']),
+            'role' => 'cadet',
         ]);
+
+        \App\Models\Cadet::create([
+            'user_id'           => $user->id,
+            'enrollment_no'     => 'NCC' . random_int(10000, 99999),
+            'status'            => 'pending',
+            'profile_completed' => false,
+        ]);
+
+        return $user;
     }
 }

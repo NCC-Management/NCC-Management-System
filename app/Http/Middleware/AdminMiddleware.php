@@ -10,7 +10,13 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check() || auth()->user()->role !== 'admin') {
+        // Not logged in → redirect to login page
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'Please log in to access the admin panel.');
+        }
+
+        // Logged in but not admin → 403
+        if (auth()->user()->role !== 'admin') {
             abort(403, 'Unauthorized Access');
         }
 

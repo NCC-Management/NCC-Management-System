@@ -34,15 +34,15 @@ public function login(Request $request)
 
     $user = Auth::user();
 
-    if ($user->role === 'admin') {
-        return redirect()->route('admin.dashboard');
+    if ($user && $user->role === 'admin') {
+        return redirect()->intended(route('admin.dashboard'));
     }
 
-    if ($user->role === 'cadet') {
-        return redirect()->route('cadet.dashboard');
+    if ($user && $user->role === 'cadet') {
+        return redirect()->intended(route('cadet.dashboard'));
     }
 
-    return redirect()->route('home');
+    return redirect()->intended(route('home'));
 }
     /*
     |--------------------------------------------------------------------------
@@ -68,8 +68,10 @@ public function login(Request $request)
 
         // Create related Cadet record
         Cadet::create([
-            'user_id'       => $user->id,
-            'enrollment_no' => 'NCC' . random_int(10000, 99999),
+            'user_id'           => $user->id,
+            'enrollment_no'     => 'NCC' . random_int(10000, 99999),
+            'status'            => 'pending',
+            'profile_completed' => false,
         ]);
 
         // Auto login after successful registration

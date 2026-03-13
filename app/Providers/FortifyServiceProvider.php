@@ -6,19 +6,49 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
+     * Override Fortify's LoginResponse to do role-based redirect.
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(LoginResponse::class, function () {
+            return new class implements LoginResponse {
+                public function toResponse($request)
+                {
+                    $user = Auth::user();
+
+                    if ($user && $user->role === 'admin') {
+                        return redirect()->intended(route('admin.dashboard'));
+                    }
+
+                    if ($user && $user->role === 'cadet') {
+                        return redirect()->intended(route('cadet.dashboard'));
+                    }
+
+                    return redirect()->intended('/');
+                }
+            };
+        });
+
+        // Force Registration to always go to complete-profile
+        $this->app->singleton(\Laravel\Fortify\Contracts\RegisterResponse::class, function () {
+            return new class implements \Laravel\Fortify\Contracts\RegisterResponse {
+                public function toResponse($request)
+                {
+                    return redirect()->route('cadet.complete-profile');
+                }
+            };
+        });
     }
 
     /**
@@ -45,7 +75,8 @@ class FortifyServiceProvider extends ServiceProvider
      */
     private function configureViews(): void
     {
-        Fortify::loginView(fn () => view('pages::auth.login'));
+        // Serve our custom dark-themed login page
+        Fortify::loginView(fn () => view('auth.login'));
         Fortify::verifyEmailView(fn () => view('pages::auth.verify-email'));
         Fortify::twoFactorChallengeView(fn () => view('pages::auth.two-factor-challenge'));
         Fortify::confirmPasswordView(fn () => view('pages::auth.confirm-password'));

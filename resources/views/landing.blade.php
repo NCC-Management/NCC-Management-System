@@ -65,9 +65,65 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <button @click="showAuthModal = true; isLogin = true" class="hidden sm:block bg-gray-900 text-white rounded-full px-7 py-3 text-sm font-bold hover:bg-theme-green transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5">
-                    Portal Login
-                </button>
+                @guest
+                    <button @click="showAuthModal = true; isLogin = true" class="hidden sm:block bg-gray-900 text-white rounded-full px-7 py-3 text-sm font-bold hover:bg-theme-green transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                        Portal Login
+                    </button>
+                @endguest
+
+                @auth
+                    <!-- Profile Actions (Desktop) -->
+                    <div class="hidden sm:flex items-center gap-3">
+                        @if(Auth::user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center justify-center bg-gray-900 text-white rounded-full px-5 py-2.5 text-sm font-bold hover:bg-theme-green transition-all shadow-md">
+                                Go to Dashboard
+                            </a>
+                        @else
+                            <a href="{{ route('cadet.dashboard') }}" class="inline-flex items-center justify-center bg-gray-900 text-white rounded-full px-5 py-2.5 text-sm font-bold hover:bg-theme-green transition-all shadow-md">
+                                Go to Dashboard
+                            </a>
+                        @endif
+
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" class="flex items-center justify-center w-10 h-10 rounded-full bg-theme-green text-white font-bold text-lg shadow-md hover:shadow-lg transition-all border-2 border-white focus:outline-none">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </button>
+                            
+                            <div x-show="open" @click.outside="open = false" x-transition x-cloak class="absolute right-0 top-full mt-3 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 overflow-hidden">
+                                <div class="px-5 py-3 border-b border-gray-100 bg-gray-50/50">
+                                    <p class="text-sm font-bold text-gray-900 truncate">{{ Auth::user()->name }}</p>
+                                    <p class="text-[10px] font-extrabold text-theme-green uppercase tracking-wider mt-0.5">{{ Auth::user()->role === 'admin' ? 'Administrator' : 'Cadet' }}</p>
+                                </div>
+                                
+                                @if(Auth::user()->role === 'admin')
+                                    <a href="{{ route('admin.dashboard') }}" class="flex items-center px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-theme-green transition-colors">
+                                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                        Admin Dashboard
+                                    </a>
+                                @else
+                                    <a href="{{ route('cadet.dashboard') }}" class="flex items-center px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-theme-green transition-colors">
+                                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                        Cadet Dashboard
+                                    </a>
+                                    <a href="{{ route('cadet.profile') }}" class="flex items-center px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-theme-green transition-colors">
+                                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                        Edit Profile
+                                    </a>
+                                @endif
+
+                                <div class="border-t border-gray-100 my-1"></div>
+                                
+                                <form method="POST" action="{{ route('logout') }}" class="w-full">
+                                    @csrf
+                                    <button type="submit" class="flex w-full items-center px-5 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors">
+                                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                        Sign Out
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @endauth
                 
                 <button @click="mobileMenu = !mobileMenu" class="md:hidden p-2 text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 shadow-sm">
                     <svg x-show="!mobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
@@ -81,7 +137,22 @@
             <a href="#why-join" @click="mobileMenu = false" class="block text-lg font-semibold text-gray-600">Why to Join</a>
             <a href="#benefits" @click="mobileMenu = false" class="block text-lg font-semibold text-gray-600">Benefits</a>
             <a href="#contact" @click="mobileMenu = false" class="block text-lg font-semibold text-gray-600">Contact</a>
-            <button @click="showAuthModal = true; isLogin = true; mobileMenu = false" class="w-full mt-4 bg-gray-900 text-white rounded-xl py-4 font-bold text-center">Portal Login</button>
+            
+            @guest
+                <button @click="showAuthModal = true; isLogin = true; mobileMenu = false" class="w-full mt-4 bg-gray-900 text-white rounded-xl py-4 font-bold text-center">Portal Login</button>
+            @endguest
+
+            @auth
+                @if(Auth::user()->role === 'admin')
+                    <a href="{{ route('admin.dashboard') }}" class="block w-full mt-4 bg-theme-green text-white rounded-xl py-4 font-bold text-center">Admin Dashboard</a>
+                @else
+                    <a href="{{ route('cadet.dashboard') }}" class="block w-full mt-4 bg-theme-green text-white rounded-xl py-4 font-bold text-center">Cadet Dashboard</a>
+                @endif
+                <form method="POST" action="{{ route('logout') }}" class="w-full mt-2">
+                    @csrf
+                    <button type="submit" class="w-full bg-red-50 text-red-600 border border-red-100 rounded-xl py-4 font-bold text-center">Sign Out</button>
+                </form>
+            @endauth
         </div>
     </nav>
 
@@ -116,12 +187,26 @@
                 </p>
                 
                 <div class="animate-fade-in-up delay-300 flex flex-col sm:flex-row items-center gap-4 pt-4">
-                    <button @click="showAuthModal = true; isLogin = false" class="w-full sm:w-auto bg-theme-green text-white rounded-full px-10 py-4 font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1">
-                        Enroll Now <span class="ml-2 font-normal">→</span>
-                    </button>
-                    <button @click="showAuthModal = true; isLogin = true" class="w-full sm:w-auto bg-white/90 backdrop-blur-sm text-gray-800 rounded-full px-10 py-4 font-bold border border-gray-200 hover:bg-white hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow hover:-translate-y-1 text-center">
-                        Login to Portal <span class="ml-2 font-normal">→</span>
-                    </button>
+                    @guest
+                        <button @click="showAuthModal = true; isLogin = false" class="w-full sm:w-auto bg-theme-green text-white rounded-full px-10 py-4 font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1">
+                            Enroll Now <span class="ml-2 font-normal">→</span>
+                        </button>
+                        <button @click="showAuthModal = true; isLogin = true" class="w-full sm:w-auto bg-white/90 backdrop-blur-sm text-gray-800 rounded-full px-10 py-4 font-bold border border-gray-200 hover:bg-white hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow hover:-translate-y-1 text-center">
+                            Login to Portal <span class="ml-2 font-normal">→</span>
+                        </button>
+                    @endguest
+
+                    @auth
+                        @if(Auth::user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}" class="w-full sm:w-auto bg-theme-green text-white rounded-full px-10 py-4 font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 text-center">
+                                Go to Admin Dashboard <span class="ml-2 font-normal">→</span>
+                            </a>
+                        @else
+                            <a href="{{ route('cadet.dashboard') }}" class="w-full sm:w-auto bg-theme-green text-white rounded-full px-10 py-4 font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 text-center">
+                                Go to Dashboard <span class="ml-2 font-normal">→</span>
+                            </a>
+                        @endif
+                    @endauth
                 </div>
             </div>
         </div>
